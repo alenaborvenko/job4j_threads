@@ -2,6 +2,7 @@ package userstorage;
 
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,6 +29,25 @@ public class UserStorageTest {
                 user1,
                 user2
         )));
+    }
+
+    @Test
+    public void whenUpdate() {
+        Storage storage = new UserStorage();
+        User user1 = new User(1, 100);
+        storage.add(user1);
+        User user2 = new User(1, 200);
+        storage.update(user2);
+        assertThat(storage.findAll().get(0), is(user2));
+    }
+
+    @Test
+    public void whenDelete() {
+        Storage storage = new UserStorage();
+        User user1 = new User(1, 100);
+        storage.add(user1);
+        storage.delete(user1);
+        assertThat(storage.findAll(), is(Collections.emptyList()));
     }
 
     private static class ThreadUserStorage extends Thread {
