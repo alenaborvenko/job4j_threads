@@ -3,7 +3,9 @@ package synch;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @ThreadSafe
 public class SingleLockList<T> implements Iterable<T> {
@@ -15,7 +17,7 @@ public class SingleLockList<T> implements Iterable<T> {
     }
 
     private List<T> copy(List<T> list) {
-        return (list instanceof RandomAccess) ? new ArrayList<>(list) : new LinkedList<>(list);
+        return new ArrayList<>(list);
     }
 
     public synchronized void add(T value) {
