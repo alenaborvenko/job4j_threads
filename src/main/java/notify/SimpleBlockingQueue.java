@@ -11,7 +11,6 @@ public class SimpleBlockingQueue<T> {
     @GuardedBy("this")
     private final Queue<T> queue = new LinkedList<>();
     private final int capacity;
-    @GuardedBy("this")
     private int count = 0;
 
     public SimpleBlockingQueue(int capacity) {
