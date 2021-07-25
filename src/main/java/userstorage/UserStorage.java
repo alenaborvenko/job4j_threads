@@ -3,68 +3,38 @@ package userstorage;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @ThreadSafe
 public class UserStorage implements Storage {
     @GuardedBy("this")
-    private final List<User> userStorage = new ArrayList<>();
+    private final Map<Integer, Integer> userStorage = new HashMap<>();
 
     @Override
     public synchronized boolean add(User user) {
-        return userStorage.add(user);
+        userStorage.putIfAbsent(user.getId(), user.getAmount());
+        return true;
     }
 
     @Override
     public synchronized boolean update(User user) {
-        int index = findIndex(user.getId());
-        if (index == -1) {
-            return false;
-        }
-        userStorage.set(index, user);
-        return true;
-    }
-
-    private synchronized int findIndex(int id) {
-        for (int i = 0; i < userStorage.size(); i++) {
-            if (userStorage.get(i).getId() == id) {
-                return i;
-            }
-        }
-        return -1;
+        return userStorage.put(user.getId(), user.getAmount()) != null;
     }
 
     @Override
     public synchronized boolean delete(User user) {
-        int index = findIndex(user.getId());
-        if (index == -1) {
-            return false;
-        }
-        userStorage.remove(index);
-        return true;
+        return userStorage.remove(user.getId()) != null;
     }
 
     @Override
     public synchronized boolean transfer(int fromId, int toId, int amount) {
-        int indexFrom = findIndex(fromId);
-        int indexTo = findIndex(toId);
-        if (indexFrom == -1 || indexTo == -1) {
+        int amountFrom = userStorage.get(fromId);
+        if (amountFrom < amount || userStorage.get(toId) == null) {
             return false;
         }
-        User userFrom = userStorage.get(indexFrom);
-        User userTo = userStorage.get(indexTo);
-        int amountFrom = userFrom.getAmount();
-        if (amountFrom < amount) {
-            return false;
-        }
-        userFrom.setAmount(amountFrom - amount);
-        userTo.setAmount(userTo.getAmount() + amount);
+        userStorage.put(fromId, amountFrom - amount);
+        userStorage.put(toId, userStorage.get(toId) + amount);
         return true;
-    }
-
-    @Override
-    public synchronized List<User> findAll() {
-        return userStorage;
     }
 }
