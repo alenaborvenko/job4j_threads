@@ -11,12 +11,20 @@ public class SimpleBlockingQueueTest {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(5);
         Thread concumer = new Thread(() -> {
             for (int i = 0; i < 10; i++) {
-                queue.poll();
+                try {
+                    queue.poll();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         Thread producer = new Thread(() -> {
             for (int i = 0; i < 11; i++) {
-                queue.offer(i);
+                try {
+                    queue.offer(i);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
         producer.start();
