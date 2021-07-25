@@ -10,12 +10,12 @@ public class CASCountTest {
     @Test
     public void casTest() throws InterruptedException {
         CASCount count = new CASCount();
-        Thread th = new Thread(count::get);
+        Thread th = new Thread(count::increment);
         Thread thread = new Thread(count::increment);
         th.start();
         thread.start();
         th.join();
         thread.join();
-        assertThat(count.get(), is(1));
+        assertThat(count.get(), is(2));
     }
 }
