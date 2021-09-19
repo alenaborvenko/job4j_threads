@@ -18,6 +18,14 @@ public class ParallelSearchTest {
     }
 
     @Test
+    public void whenFindLastElem() {
+        Integer[] array = IntStream.range(1, 100).boxed().toArray(Integer[]::new);
+        Integer findElem = 99;
+        int actual = ParallelSearch.findElem(array, findElem, 0, array.length - 1);
+        assertThat(actual, is(98));
+    }
+
+    @Test
     public void whenNotFoundElem() {
         String[] array = IntStream.range(1, 100).mapToObj(String::valueOf).toArray(String[]::new);
         String findElem = "no elem in array";
